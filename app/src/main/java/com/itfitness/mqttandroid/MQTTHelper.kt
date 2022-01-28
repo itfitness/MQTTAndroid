@@ -1,11 +1,11 @@
-package com.itfitness.mqttdemo
+package com.itfitness.mqttandroid
 
 import android.content.Context
 import android.text.TextUtils
 import com.blankj.utilcode.util.DeviceUtils
 import com.blankj.utilcode.util.LogUtils
-import com.itfitness.mqttdemo.data.Qos
-import com.itfitness.mqttdemo.data.Topic
+import com.itfitness.mqttandroid.data.Qos
+import com.itfitness.mqttandroid.data.Topic
 import com.itfitness.mqttlibrary.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import java.util.*
@@ -25,19 +25,19 @@ class MQTTHelper{
     private val connectOptions: MqttConnectOptions
     private var mqttActionListener: IMqttActionListener? = null
     constructor(context: Context, serverUrl:String, name:String, pass:String){
-        val macAddress = DeviceUtils.getAndroidID()
-        val clientId = if(!TextUtils.isEmpty(macAddress)){
-            macAddress
+        val androidId = DeviceUtils.getAndroidID()
+        val clientId = if(!TextUtils.isEmpty(androidId)){
+            androidId
         }else{
             UUID.randomUUID().toString()
         }
         mqttClient = MqttAndroidClient(context,serverUrl,clientId)
         connectOptions = MqttConnectOptions().apply {
-            isCleanSession = false
-            connectionTimeout = 30
-            keepAliveInterval = 10
-            userName = name
-            password = pass.toCharArray()
+            isCleanSession = false //是否会话持久化
+            connectionTimeout = 30 //连接超时时间
+            keepAliveInterval = 10 //发送心跳时间
+            userName = name //如果设置了认证，填的用户名
+            password = pass.toCharArray() //用户密码
         }
     }
 
@@ -82,5 +82,12 @@ class MQTTHelper{
         msg.payload = message.toByteArray()
         msg.qos = qos.value()
         mqttClient.publish(topic.value(),msg)
+    }
+
+    /**
+     * 断开连接
+     */
+    fun disconnect(){
+        mqttClient.disconnect()
     }
 }

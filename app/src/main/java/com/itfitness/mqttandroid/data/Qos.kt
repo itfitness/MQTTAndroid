@@ -1,4 +1,4 @@
-package com.itfitness.mqttdemo.data
+package com.itfitness.mqttandroid.data
 
 /**
  *
